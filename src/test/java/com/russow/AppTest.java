@@ -25,8 +25,8 @@ public class AppTest {
 
     private static Validator validator;
 
-    private static final String INCORRECT_NAME_MESSAGE = "должно соответствовать шаблону \"[a-zA-Z].{5,}\"";
-    private static final String INCORRECT_PASSWORD_MESSAGE = "должно соответствовать шаблону \"[a-zA-Z]+\"";
+    private static final String INCORRECT_NAME_MESSAGE = "должно соответствовать шаблону \"(([a-z]+\\d+)|(\\d+[a-z]+))[a-z\\d]*\"";
+    private static final String INCORRECT_PASSWORD_MESSAGE = "размер должен быть между 6 и 2147483647";
     private static final String INCORRECT_EMAIL_MESSAGE = "The email and confirmedEmail fields must match";
     private static final String INCORRECT_DATE_MESSAGE = "Update date must be greater than current";
 
@@ -38,10 +38,10 @@ public class AppTest {
 
     @Test
     public void testCorrectValues() {
-        final UserInfo userInfo = new UserInfo("Sergey", "password", "email@email.com", "email@email.com", OffsetDateTime.parse("2020-11-20T00:00:00+03:00"));
+        final UserInfo userInfo = new UserInfo("sergey22", "password", "email@email.com", "email@email.com", OffsetDateTime.parse("2020-11-20T00:00:00+03:00"));
 
         Set<ConstraintViolation<UserInfo>> validates = validator.validate(userInfo);
-        assertEquals(validates.size(), 0);
+        assertEquals(0, validates.size());
     }
 
     @Test
@@ -55,7 +55,7 @@ public class AppTest {
 
     @Test
     public void testIncorrectPasswordValue() {
-        final UserInfo userInfo = new UserInfo("Sergey", "123pas", "email@email.com", "email@email.com", OffsetDateTime.parse("2020-11-20T00:00:00+03:00"));
+        final UserInfo userInfo = new UserInfo("sergey22", "123pa", "email@email.com", "email@email.com", OffsetDateTime.parse("2020-11-20T00:00:00+03:00"));
 
         Set<ConstraintViolation<UserInfo>> validates = validator.validate(userInfo);
         assertEquals(1, validates.size());
@@ -64,7 +64,7 @@ public class AppTest {
 
     @Test
     public void testIncorrectEmailValue() {
-        final UserInfo userInfo = new UserInfo("Sergey", "password", "email@email.com", "email2@email.com", OffsetDateTime.parse("2020-11-20T00:00:00+03:00"));
+        final UserInfo userInfo = new UserInfo("sergey22", "password", "email@email.com", "email2@email.com", OffsetDateTime.parse("2020-11-20T00:00:00+03:00"));
 
         Set<ConstraintViolation<UserInfo>> validates = validator.validate(userInfo);
         assertEquals(1, validates.size());
@@ -73,7 +73,7 @@ public class AppTest {
 
     @Test
     public void testIncorrectDateValue() {
-        final UserInfo userInfo = new UserInfo("Sergey", "password", "email@email.com", "email@email.com", OffsetDateTime.parse("2019-11-20T00:00:00+03:00"));
+        final UserInfo userInfo = new UserInfo("sergey22", "password", "email@email.com", "email@email.com", OffsetDateTime.parse("2019-11-20T00:00:00+03:00"));
 
         Set<ConstraintViolation<UserInfo>> validates = validator.validate(userInfo);
         assertEquals(1, validates.size());
@@ -82,7 +82,7 @@ public class AppTest {
 
     @Test
     public void testIncorrectNameAndPasswordValues() {
-        final UserInfo userInfo = new UserInfo("Carl", "pas123", "email@email.com", "email@email.com", OffsetDateTime.parse("2020-11-20T00:00:00+03:00"));
+        final UserInfo userInfo = new UserInfo("Carl", "pas12", "email@email.com", "email@email.com", OffsetDateTime.parse("2020-11-20T00:00:00+03:00"));
 
         Set<ConstraintViolation<UserInfo>> validates = validator.validate(userInfo);
         List<ConstraintViolation<UserInfo>> validatesList = new ArrayList<>(validates);
@@ -95,7 +95,6 @@ public class AppTest {
         final UserInfo userInfo = new UserInfo("Carl", "password", "email1@email.com", "email2@email.com", OffsetDateTime.parse("2020-11-20T00:00:00+03:00"));
 
         Set<ConstraintViolation<UserInfo>> validates = validator.validate(userInfo);
-        List<ConstraintViolation<UserInfo>> validatesList = new ArrayList<>(validates);
 
         assertEquals(2, validates.size());
     }
@@ -105,7 +104,6 @@ public class AppTest {
         final UserInfo userInfo = new UserInfo("Carl", "password", "email@email.com", "email@email.com", OffsetDateTime.parse("2019-11-20T00:00:00+03:00"));
 
         Set<ConstraintViolation<UserInfo>> validates = validator.validate(userInfo);
-        List<ConstraintViolation<UserInfo>> validatesList = new ArrayList<>(validates);
 
         assertEquals(2, validates.size());
     }
@@ -115,7 +113,6 @@ public class AppTest {
         final UserInfo userInfo = new UserInfo("Sergey", "password1", "email1@email.com", "email@email.com", OffsetDateTime.parse("2020-11-20T00:00:00+03:00"));
 
         Set<ConstraintViolation<UserInfo>> validates = validator.validate(userInfo);
-        List<ConstraintViolation<UserInfo>> validatesList = new ArrayList<>(validates);
 
         assertEquals(2, validates.size());
     }
@@ -125,37 +122,33 @@ public class AppTest {
         final UserInfo userInfo = new UserInfo("Sergey", "password1", "email@email.com", "email@email.com", OffsetDateTime.parse("2019-11-20T00:00:00+03:00"));
 
         Set<ConstraintViolation<UserInfo>> validates = validator.validate(userInfo);
-        List<ConstraintViolation<UserInfo>> validatesList = new ArrayList<>(validates);
 
         assertEquals(2, validates.size());
     }
 
     @Test
     public void testIncorrectEmailAndUpdateDateValues() {
-        final UserInfo userInfo = new UserInfo("Sergey", "password", "email1@email.com", "email@email.com", OffsetDateTime.parse("2019-11-20T00:00:00+03:00"));
+        final UserInfo userInfo = new UserInfo("sergey22", "password", "email1@email.com", "email@email.com", OffsetDateTime.parse("2019-11-20T00:00:00+03:00"));
 
         Set<ConstraintViolation<UserInfo>> validates = validator.validate(userInfo);
-        List<ConstraintViolation<UserInfo>> validatesList = new ArrayList<>(validates);
 
         assertEquals(2, validates.size());
     }
 
     @Test
     public void testIncorrectNameAndPasswordAndEmailValues() {
-        final UserInfo userInfo = new UserInfo("Carl", "pas123", "email1@email.com", "email@email.com", OffsetDateTime.parse("2020-11-20T00:00:00+03:00"));
+        final UserInfo userInfo = new UserInfo("Carl", "pas12", "email1@email.com", "email@email.com", OffsetDateTime.parse("2020-11-20T00:00:00+03:00"));
 
         Set<ConstraintViolation<UserInfo>> validates = validator.validate(userInfo);
-        List<ConstraintViolation<UserInfo>> validatesList = new ArrayList<>(validates);
 
         assertEquals(3, validates.size());
     }
 
     @Test
     public void testIncorrectNameAndPasswordAndEmailAndUpdateDateValues() {
-        final UserInfo userInfo = new UserInfo("Carl", "pas123", "email1@email.com", "email@email.com", OffsetDateTime.parse("2019-11-19T00:00:00+03:00"));
+        final UserInfo userInfo = new UserInfo("Carl", "pas12", "email1@email.com", "email@email.com", OffsetDateTime.parse("2019-11-19T00:00:00+03:00"));
 
         Set<ConstraintViolation<UserInfo>> validates = validator.validate(userInfo);
-        List<ConstraintViolation<UserInfo>> validatesList = new ArrayList<>(validates);
 
         assertEquals(4, validates.size());
     }
